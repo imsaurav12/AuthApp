@@ -69,9 +69,9 @@ exports.login = async (req, res) => {
         }
 
         //DB me user hai ki nahi check kro
-        const user = await User.findOne({email});
+        let user = await User.findOne({email});
         if(!user) {
-            return res.json(401).json({
+            return res.status(401).json({
                 success:false,
                 message:"Beta, Login se pahle regiater kiya jata h, JAO KRKE AAO"
             });
@@ -79,7 +79,7 @@ exports.login = async (req, res) => {
 
         //sign(payload)
         //payload mtlb jo exact data jo bhezna chahte hai
-        const payload = {
+        const payload = { 
             email: user.email,
             id: user._id,
             role: user.role,
@@ -93,6 +93,7 @@ exports.login = async (req, res) => {
                                     expiresIn:"2h"
                                 }
             );
+            user= user.toObject();
             user.token = token;
             user.password = undefined; //user ke object se password hataya, DB se nahi
 
